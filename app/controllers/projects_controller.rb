@@ -8,7 +8,7 @@ class ProjectsController < ApplicationController
   # GET /projects
   def index
     project = Project.all
-    render json: project.to_json(except: [:created_at, :updated_at], include: {todos: {except: [:created_at, :updated_at]}}), status: :ok
+    render json: project.to_json(except: [:created_at, :updated_at], include: {todos: {except: [:created_at, :updated_at, :project_id]}}), status: :ok
   end
 
   # POST /projects/:id/todos
@@ -18,7 +18,7 @@ class ProjectsController < ApplicationController
       if @project.save
         @todo = @project.todos.new(todo_params)
         if @todo.save
-          render json: @todo.to_json(except: [:created_at, :updated_at]), status: :created
+          render json: @todo.to_json(except: [:created_at, :updated_at, :project_id]), status: :created
         else
           render json: @todo.errors, status: :unprocessable_entity
         end

@@ -12,7 +12,7 @@ class TodosController < ApplicationController
     @project =  Project.find(params[:id])
     @todo = @project.todos.find(params[:idx])
     @todo.update(todo_idx)
-    render json: @todo.to_json(except: [:created_at, :updated_at]), status: :ok
+    render json: @todo.to_json(except: [:created_at, :updated_at, :project_id]), status: :ok
   end
 
     private  def new_project
