@@ -37,10 +37,10 @@ class ProjectsController < ApplicationController
 end
 
 private  def new_project
-  params.require(:project).permit(:title)
+  params.permit(:title)
 end
 
 private def todo_params
-  params.require(:todo).permit(:text, :isCompleted)
+  params.permit(:text, :isCompleted)
 end
 end
