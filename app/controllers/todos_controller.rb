@@ -3,27 +3,29 @@ class TodosController < ApplicationController
 
   # GET /projects
   def index
-    @todos = Todo.all
+    @todos = Todo.All
     render json: @todos
   end
 
   # PATCH /projects/:id/todos/:idx
   def update
-    @project =  Project.find(params[:id])
-    @todo = @project.todos.find(params[:idx])
-    @todo.update(todo_idx)
+    set_projects
+    set_todo
+    @todo.update_column(:isCompleted, params[:isCompleted])
     render json: @todo.to_json(except: [:created_at, :updated_at, :project_id]), status: :ok
   end
 
-    private  def new_project
-      params.require(:todo).permit(:title)
+    private 
+    def todo_params
+      params.require(:todo).permit(:isCompleted)
     end
-
-    private def todo_params
-      params.require(:todo).permit(:text, :isCompleted)
+    def set_projects
+      @projects = Project.find(params[:id])
     end
-
-    private def todo_idx
+    def set_todo
+      @todo = @projects.todos.find(params[:idx])
+    end
+    def todo_status
       params.require(:todo).permit(:isCompleted)
     end
   end

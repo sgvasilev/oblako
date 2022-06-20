@@ -7,8 +7,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects
   def index
-    project = Project.all
-    render json: project.to_json(except: [:created_at, :updated_at], include: {todos: {except: [:created_at, :updated_at, :project_id]}}), status: :ok
+    @project = Project.all
+    render json: @project, except: [:created_at, :updated_at], include: {todos: {except: [:created_at, :updated_at, :project_id]}}, status: :ok
   end
 
   # POST /projects/:id/todos
@@ -36,11 +36,12 @@ class ProjectsController < ApplicationController
     end
 end
 
-private  def new_project
-  params.permit(:title)
-end
+  private  
+  def new_project
+    params.permit(:title)
+  end
 
-private def todo_params
-  params.permit(:text, :isCompleted)
-end
+  def todo_params
+    params.require(:todos).permit(:text, :isCompleted)
+  end
 end
