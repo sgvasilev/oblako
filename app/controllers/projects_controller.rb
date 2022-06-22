@@ -13,28 +13,34 @@ class ProjectsController < ApplicationController
 
   # POST /projects/:id/todos
   def create
-    if Project.where(:id => params[:id]).blank?
-      @project = Project.new(new_project)
-      if @project.save
-        @todo = @project.todos.new(todo_params)
-        if @todo.save
-          render json: @todo.to_json(except: [:created_at, :updated_at, :project_id]), status: :created
-        else
-          render json: @todo.errors, status: :unprocessable_entity
-        end
-      else
-        render json: @todo.errors, status: :unprocessable_entity
-      end
-    else
+    if Project.exists?(params[:id])
       @project = Project.find(params[:id])
       @todo = @project.todos.new(todo_params)
-        if @todo.save
-          render json: @todo.to_json(except: [:created_at, :updated_at]), status: :created
+        if @project.save
+          render json: @todo.to_json(except: [:created_at,  :updated_at, :project_id]), status: :created
         else
           render json: @todo.errors, status: :unprocessable_entity
         end
+    else
+      @project = Project.new(new_project)
+        @todo = @project.todos.new(todo_params)
+          if @project.save
+            render json: @project.to_json(except: [:created_at, :updated_at, :project_id], include: {todos: {except: [:created_at, :updated_at, :project_id]}}), status: :created
+          else
+            render json: @todo.errors, status: :unprocessable_entity
+         end
     end
-end
+  end
+
+  # DELETE /projects/:id
+  def delete
+    @project = Project.find(params[:id])
+    if @project.destroy
+      render json: {"message":"ok"}, status: :ok
+    else
+      render json: {"message":"bad"}, status: :unprocessable_entity
+    end
+  end
 
   private  
   def new_project
@@ -42,6 +48,6 @@ end
   end
 
   def todo_params
-    params.require(:todos).permit(:text, :isCompleted)
+    params.require(:todos).map { |m| m.permit(:isCompleted, :text) }
   end
 end

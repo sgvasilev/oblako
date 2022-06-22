@@ -14,6 +14,16 @@ class TodosController < ApplicationController
     @todo.update_column(:isCompleted, params[:isCompleted])
     render json: @todo.to_json(except: [:created_at, :updated_at, :project_id]), status: :ok
   end
+  # DELETE /projects/:id/todos/:idx
+  def delete
+    set_projects
+    set_todo
+    if @todo.destroy!
+      render json: {"message":"ok"}, status: :ok
+    else
+      render json: {"message":"bad"}, status: :unprocessable_entity
+    end
+  end
 
     private 
     def todo_params
