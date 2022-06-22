@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "https://oblako-client.herokuapp.com/"
+    origins "oblako-client.herokuapp.com"
 
     resource "*",
       headers: :any,
